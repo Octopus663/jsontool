@@ -26,13 +26,16 @@ public class ProjectService {
     private final ProjectFileRepository projectFileRepository;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final SchemaExportService exportService;
+    private final JsonFlatService flatService;
 
     public ProjectService(ProjectRepository projectRepository,
                           ProjectFileRepository projectFileRepository,
-                          SchemaExportService exportService) {
+                          SchemaExportService exportService,
+                          JsonFlatService flatService) {
         this.projectRepository = projectRepository;
         this.projectFileRepository = projectFileRepository;
         this.exportService = exportService;
+        this.flatService = flatService;
     }
 
     @Transactional
@@ -111,4 +114,18 @@ public class ProjectService {
 
         return exportService.generateMarkdownTable(file.getCurrentContent());
     }
+    public List<ProjectFile> getProjectFiles(Long projectId) {
+        return projectFileRepository.findAllByProjectId(projectId);
+    }
+    public Optional<Project> findProjectById(Long projectId) {
+        return projectRepository.findById(projectId);
+    }
+
+    public String getFlatJson(Long fileId) {
+        ProjectFile file = projectFileRepository.findById(fileId)
+                .orElseThrow(() -> new RuntimeException("File not found"));
+
+        return flatService.flattenJson(file.getCurrentContent());
+    }
+
 }

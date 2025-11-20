@@ -24,7 +24,7 @@ public class SchemaExportService {
             JsonNode properties = schemaNode.get("properties");
 
             if (properties == null || !properties.isObject()) {
-                return "## Структура схеми\n\nНе знайдено властивостей ('properties') для експорту.";
+                return "## Schema Structure\n\nNo properties found to export.";
             }
 
             JsonNode requiredNode = schemaNode.get("required");
@@ -35,8 +35,8 @@ public class SchemaExportService {
                     .collect(Collectors.toList())
                     : java.util.Collections.emptyList();
 
-            markdown.append("## Структура схеми\n\n");
-            markdown.append("| Властивість | Тип | Обов'язкове | Опис |\n");
+            markdown.append("## Schema Structure\n\n");
+            markdown.append("| Property | Type | Required | Description |\n");
             markdown.append("|:---|:---|:---:|:---|\n");
 
             properties.fields().forEachRemaining(entry -> {
@@ -45,13 +45,14 @@ public class SchemaExportService {
 
                 String type = prop.has("type") ? prop.get("type").asText() : "N/A";
                 String description = prop.has("description") ? prop.get("description").asText().replaceAll("\n", " ") : "—";
-                String required = requiredFields.contains(name) ? "✅" : "❌";
+
+                String required = requiredFields.contains(name) ? "Yes" : "No";
 
                 markdown.append(String.format("| %s | %s | %s | %s |\n", name, type, required, description));
             });
 
         } catch (Exception e) {
-            markdown.append("## Помилка експорту\n\nНе вдалося проаналізувати JSON Schema: " + e.getMessage());
+            markdown.append("## Export Error\n\nFailed to parse JSON Schema: " + e.getMessage());
         }
 
         return markdown.toString();

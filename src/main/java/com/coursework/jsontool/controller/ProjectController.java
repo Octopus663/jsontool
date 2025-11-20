@@ -111,4 +111,22 @@ public class ProjectController {
                 .header("Content-Type", "text/markdown; charset=utf-8")
                 .body(markdownContent);
     }
+
+    @GetMapping("/{projectId}/files")
+    public ResponseEntity<List<ProjectFile>> getProjectFiles(@PathVariable Long projectId) {
+        return ResponseEntity.ok(projectService.getProjectFiles(projectId));
+    }
+
+    @GetMapping("/{projectId}")
+    public ResponseEntity<Project> getProject(@PathVariable Long projectId) {
+        return projectService.findProjectById(projectId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/files/{fileId}/flat")
+    public ResponseEntity<String> getFlatJsonView(@PathVariable Long fileId) {
+        String flatJson = projectService.getFlatJson(fileId);
+        return ResponseEntity.ok(flatJson);
+    }
 }
