@@ -501,3 +501,112 @@ function saveVisualChanges() {
 
     showToast('Schema updated from Visual Editor!', 'success');
 }
+
+//Formatting Tools
+function formatJson() {
+    try {
+        const schemaVal = aceSchemaEditor.getValue();
+        if (schemaVal) {
+            const parsed = JSON.parse(schemaVal);
+            aceSchemaEditor.setValue(JSON.stringify(parsed, null, 2), -1); // 2 пробіли відступу
+        }
+
+        const dataVal = aceDataEditor.getValue();
+        if (dataVal) {
+            const parsed = JSON.parse(dataVal);
+            aceDataEditor.setValue(JSON.stringify(parsed, null, 2), -1);
+        }
+        showToast('Formatted successfully', 'success');
+    } catch (e) {
+        showToast('Invalid JSON, cannot format', 'danger');
+    }
+}
+
+function minifyJson() {
+    try {
+        const dataVal = aceDataEditor.getValue();
+        if (dataVal) {
+            const parsed = JSON.parse(dataVal);
+            aceDataEditor.setValue(JSON.stringify(parsed), -1); // Без відступів
+        }
+        showToast('Minified JSON Data', 'success');
+    } catch (e) {
+        showToast('Invalid JSON, cannot minify', 'danger');
+    }
+}
+
+
+
+//History Logic
+async function showHistory() {
+    const modal = new bootstrap.Modal(document.getElementById('historyModal'));
+    modal.show();
+
+    // Завантажуємо історію для обох файлів
+    loadHistoryForFile(currentSchemaFileId, 'schemaHistory', aceSchemaEditor);
+    loadHistoryForFile(currentDataFileId, 'dataHistory', aceDataEditor);
+}
+
+async function loadHistoryForFile(fileId, containerId, editorInstance) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '<div class="text-center">Loading...</div>';
+
+    try {
+        const response = await fetch(`${API_BASE}/projects/files/${fileId}/history`, {
+            method: 'GET',
+            headers: { 'Authorization': localStorage.getItem('auth') }
+        });
+
+        if (response.ok) {
+            const history = await response.json();
+            if (history.length === 0) {
+                container.innerHTML = '<p class="text-muted">No history available.</p>';
+                return;
+            }
+
+            let html = '<div class="list-group">';
+            history.forEach(ver => {
+                const date = new Date(ver.createdAt).toLocaleString();
+
+                const preview = ver.content.substring(0, 50).replace(/</g, "&lt;") + '...';
+                html += `
+                <button class="list-group-item list-group-item-action" onclick='restoreVersion(${JSON.stringify(ver.content)}, "${containerId}")'>
+                    <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1">Version from ${date}</h6>
+                        <small>ID: ${ver.id}</small>
+                    </div>
+                    <small class="text-muted">${preview}</small>
+                </button>
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        }
+    } catch (e) {
+        container.innerHTML = '<div class="text-danger">Error loading history</div>';
+    }
+}
+
+function restoreVersion(content, type) {
+    const modalEl = document.getElementById('confirmationModal');
+    const confirmBtn = document.getElementById('confirmRestoreBtn');
+    const modal = new bootstrap.Modal(modalEl);
+
+    confirmBtn.onclick = function() {
+        if (type === 'schemaHistory') {
+            aceSchemaEditor.setValue(content, -1);
+            showToast('Schema restored from history', 'success');
+        } else {
+            aceDataEditor.setValue(content, -1);
+            showToast('Data restored from history', 'success');
+        }
+
+        modal.hide();
+        const historyModalEl = document.getElementById('historyModal');
+        const historyModal = bootstrap.Modal.getInstance(historyModalEl);
+        historyModal.hide();
+    };
+
+    // 4. Показуємо вікно підтвердження
+    modal.show();
+}

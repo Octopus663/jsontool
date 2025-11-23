@@ -129,4 +129,10 @@ public class ProjectController {
         String flatJson = projectService.getFlatJson(fileId);
         return ResponseEntity.ok(flatJson);
     }
+
+    @GetMapping("/files/{fileId}/history")
+    public ResponseEntity<List<com.coursework.jsontool.model.FileVersion>> getHistory(@PathVariable Long fileId) {
+        return ResponseEntity.ok(projectService.getFileHistory(fileId));
+    }
+
 }

@@ -16,8 +16,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import com.coursework.jsontool.dto.ValidationResultDto;
+import com.coursework.jsontool.model.FileVersion;
+import com.coursework.jsontool.repository.FileVersionRepository;
+
 
 @Service
 public class ProjectService {
@@ -27,15 +29,18 @@ public class ProjectService {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final SchemaExportService exportService;
     private final JsonFlatService flatService;
+    private final FileVersionRepository versionRepository;
 
     public ProjectService(ProjectRepository projectRepository,
                           ProjectFileRepository projectFileRepository,
                           SchemaExportService exportService,
-                          JsonFlatService flatService) {
+                          JsonFlatService flatService,
+                          FileVersionRepository versionRepository) {
         this.projectRepository = projectRepository;
         this.projectFileRepository = projectFileRepository;
         this.exportService = exportService;
         this.flatService = flatService;
+        this.versionRepository = versionRepository;
     }
 
     @Transactional
@@ -74,9 +79,14 @@ public class ProjectService {
         ProjectFile file = projectFileRepository.findById(fileId)
                 .orElseThrow(() -> new RuntimeException("File not found with ID: " + fileId));
 
-        file.setCurrentContent(newContent);
+        FileVersion version = new FileVersion(fileId, newContent);
+        versionRepository.save(version);
 
+        file.setCurrentContent(newContent);
         return projectFileRepository.save(file);
+    }
+    public List<FileVersion> getFileHistory(Long fileId) {
+        return versionRepository.findTop10ByFileIdOrderByCreatedAtDesc(fileId);
     }
 
 

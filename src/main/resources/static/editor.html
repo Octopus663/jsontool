@@ -71,6 +71,9 @@
       <button class="btn btn-warning btn-sm text-dark fw-bold" onclick="validateProject()">Validate</button>
       <button class="btn btn-info btn-sm text-white fw-bold" onclick="exportMarkdown()">Export MD</button>
       <button class="btn btn-secondary btn-sm text-white fw-bold" onclick="showFlatView()">Flat View</button>
+      <button class="btn btn-secondary btn-sm fw-bold me-1" onclick="formatJson()">Format</button>
+      <button class="btn btn-secondary btn-sm fw-bold me-1" onclick="minifyJson()">Minify</button>
+      <button class="btn btn-outline-light btn-sm ms-2" onclick="showHistory()">History</button>
     </div>
   </div>
 </nav>
@@ -170,6 +173,50 @@
       <button type="button" class="btn btn-primary" onclick="saveVisualChanges()">Apply Changes</button>
     </div>
   </div>
+  </div>
+</div>
+
+<div class="modal fade" id="historyModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">File Version History</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="nav nav-tabs" id="historyTabs" role="tablist">
+          <li class="nav-item">
+            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#schemaHistory">Schema</button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#dataHistory">Data</button>
+          </li>
+        </ul>
+        <div class="tab-content mt-3" id="historyContent">
+          <div class="tab-pane fade show active" id="schemaHistory">Loading...</div>
+          <div class="tab-pane fade" id="dataHistory">Loading...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="confirmationModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-warning-subtle">
+        <h5 class="modal-title text-warning-emphasis">⚠️ Confirm Restoration</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to restore this version?</p>
+        <p class="text-danger small fw-bold">Current unsaved changes in the editor will be lost!</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-warning fw-bold" id="confirmRestoreBtn">Yes, Restore</button>
+      </div>
+    </div>
   </div>
 </div>
 
