@@ -1,4 +1,4 @@
-# 🛠️ JSON Tool
+#  JSON Tool
 
 **JSON Tool** is a comprehensive full-stack web application designed to simplify the lifecycle of JSON Schema development. It provides a user-friendly interface for creating, editing, validating, and documenting JSON data structures.
 
@@ -8,26 +8,26 @@
 
 ## ✨ Features
 
-### 🚀 Core Functionality
+###  Core Functionality
 * **Project Management**: Create and manage multiple projects to organize your schemas.
 * **Dual-Pane Editor**: Real-time split view for JSON Schema and JSON Data.
 * **Syntax Highlighting**: Integrated **Ace Editor** for a professional coding experience with error detection.
 
-### 🛠️ Tools & Utilities
+###  Tools & Utilities
 * **Validation**: Server-side validation of JSON Data against JSON Schema using standard specifications.
 * **Visual Editor**: No-code table interface to add/edit schema properties, types, and descriptions.
 * **Flat View**: Convert nested JSON structures into a flattened "dot-notation" list.
 * **Markdown Export**: Auto-generate technical documentation tables from your schema.
 * **Format & Minify**: One-click tools to beautify or compress your JSON code.
 
-### 🛡️ Security & System
+###  Security & System
 * **Secure Authentication**: User registration and login with BCrypt password hashing.
 * **Version Control**: Automatic history tracking with the ability to restore previous file versions.
 * **Admin Panel**: Dedicated dashboard for user management (Ban/Unban) and viewing system logs.
 
 ---
 
-## 🏗️ Tech Stack
+##  Tech Stack
 
 | Layer | Technology |
 | :--- | :--- |
@@ -39,7 +39,7 @@
 
 
 
-## ⚙️ Getting Started
+##  Getting Started
 
 Follow these instructions to set up the project locally.
 
@@ -52,8 +52,8 @@ Follow these instructions to set up the project locally.
 
 1.  **Clone the repository**
     ```bash
-    git clone [https://github.com/your-username/json-tool.git](https://github.com/your-username/json-tool.git)
-    cd json-tool
+    git clone [https://github.com/Octopus663/jsontool.git](https://github.com/Octopus663/jsontool.git)
+    cd jsontool
     ```
 
 2.  **Database Setup**
@@ -81,7 +81,7 @@ Follow these instructions to set up the project locally.
 
 ---
 
-## 🔐 Admin Setup
+##  Admin Setup
 
 By default, new users are registered with the `USER` role. To access the Admin Panel:
 
@@ -94,7 +94,7 @@ By default, new users are registered with the `USER` role. To access the Admin P
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```text
 src/main/java/com/coursework/jsontool
