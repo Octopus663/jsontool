@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 import com.coursework.jsontool.dto.ValidationResultDto;
 import com.coursework.jsontool.model.FileVersion;
 import com.coursework.jsontool.repository.FileVersionRepository;
-
+import com.coursework.jsontool.service.LogService;
 
 @Service
 public class ProjectService {
@@ -30,17 +30,20 @@ public class ProjectService {
     private final SchemaExportService exportService;
     private final JsonFlatService flatService;
     private final FileVersionRepository versionRepository;
+    private final LogService logService;
+
 
     public ProjectService(ProjectRepository projectRepository,
                           ProjectFileRepository projectFileRepository,
                           SchemaExportService exportService,
                           JsonFlatService flatService,
-                          FileVersionRepository versionRepository) {
+                          FileVersionRepository versionRepository, LogService logService) {
         this.projectRepository = projectRepository;
         this.projectFileRepository = projectFileRepository;
         this.exportService = exportService;
         this.flatService = flatService;
         this.versionRepository = versionRepository;
+        this.logService = logService;
     }
 
     @Transactional
@@ -63,6 +66,7 @@ public class ProjectService {
         dataFile.setCurrentContent("{\n}");
         projectFileRepository.save(dataFile);
 
+        logService.log("INFO", "ProjectService", "New project created: '" + projectName + "' by User ID " + userId);
         return savedProject;
     }
 
@@ -83,7 +87,10 @@ public class ProjectService {
         versionRepository.save(version);
 
         file.setCurrentContent(newContent);
-        return projectFileRepository.save(file);
+        ProjectFile savedFile = projectFileRepository.save(file);
+        logService.log("INFO", "ProjectService", "File updated. ID: " + fileId + ", Type: " + file.getFileType());
+
+        return savedFile;
     }
     public List<FileVersion> getFileHistory(Long fileId) {
         return versionRepository.findTop10ByFileIdOrderByCreatedAtDesc(fileId);

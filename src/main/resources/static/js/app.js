@@ -73,6 +73,45 @@ function logout() {
 }
 
 //Load Projects
+
+async function loadProfileAndRenderAdminButton() {
+    const authHeader = localStorage.getItem('auth');
+
+    if (!authHeader) return;
+
+    try {
+        const response = await fetch(`${API_BASE}/auth/profile`, {
+            method: 'GET',
+            headers: { 'Authorization': authHeader }
+        });
+
+        if (response.ok) {
+            const profile = await response.json();
+
+            document.getElementById('userEmailDisplay').textContent = profile.email;
+
+            if (profile.role === 'ADMIN') {
+                const controls = document.getElementById('userControls');
+
+                const adminBtn = document.createElement('a');
+                adminBtn.className = 'btn btn-sm btn-danger me-2';
+                adminBtn.href = 'admin.html';
+                adminBtn.textContent = 'Admin Panel';
+
+                controls.insertBefore(adminBtn, controls.querySelector('button[onclick="logout()"]'));
+            }
+
+        } else if (response.status === 401 || response.status === 403) {
+            logout();
+        }
+    } catch (error) {
+        console.error('Error loading profile:', error);
+    }
+}
+
+
+
+
 async function loadProjects() {
     const listContainer = document.getElementById('projectsList');
     if (!listContainer) return;

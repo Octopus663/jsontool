@@ -20,7 +20,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
         <a class="navbar-brand" href="#">JSON Tool</a>
-        <div class="d-flex">
+        <div class="d-flex ms-auto align-items-center" id="userControls">
             <span class="navbar-text text-white me-3" id="userEmailDisplay"></span>
             <button class="btn btn-outline-light btn-sm" onclick="logout()">Logout</button>
         </div>
@@ -70,7 +70,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         checkAuth();
-        document.getElementById('userEmailDisplay').textContent = localStorage.getItem('userEmail');
+        loadProfileAndRenderAdminButton();
         loadProjects();
     });
 </script>
