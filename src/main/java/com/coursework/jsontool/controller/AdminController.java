@@ -40,4 +40,12 @@ public class AdminController {
         userRepository.save(user);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/users/{userId}/unban")
+    public ResponseEntity<?> unbanUser(@PathVariable Long userId) {
+        User user = userRepository.findById(userId).orElseThrow();
+        user.setRole("USER");
+        userRepository.save(user);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -69,9 +69,9 @@
                 <tr>
                     <td>${u.id}</td>
                     <td>${u.email}</td>
-                    <td><span class="badge bg-${u.role === 'ADMIN' ? 'danger' : 'primary'}">${u.role}</span></td>
+                    <td><span class="badge bg-${u.role === 'ADMIN' ? 'danger' : u.role === 'BANNED' ? 'warning' : 'primary'}">${u.role}</span></td>
                     <td>
-                        ${u.role !== 'ADMIN' ? `<button class="btn btn-sm btn-outline-danger" onclick="banUser(${u.id})">Ban</button>` : ''}
+                        ${u.role !== 'ADMIN' ? (u.role === 'BANNED' ? `<button class="btn btn-sm btn-outline-success" onclick="unbanUser(${u.id})">Unban</button>` : `<button class="btn btn-sm btn-outline-danger" onclick="banUser(${u.id})">Ban</button>`) : ''}
                     </td>
                 </tr>
             `).join('');
@@ -100,6 +100,16 @@
   async function banUser(id) {
     if(confirm('Ban this user?')) {
       await fetch(`http://localhost:8080/api/admin/users/${id}/ban`, {
+        method: 'POST',
+        headers: { 'Authorization': localStorage.getItem('auth') }
+      });
+      loadUsers();
+    }
+  }
+
+  async function unbanUser(id) {
+    if(confirm('Unban this user?')) {
+      await fetch(`http://localhost:8080/api/admin/users/${id}/unban`, {
         method: 'POST',
         headers: { 'Authorization': localStorage.getItem('auth') }
       });

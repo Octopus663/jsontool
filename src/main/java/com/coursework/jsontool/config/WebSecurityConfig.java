@@ -18,12 +18,23 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/index.html", "/js/**", "/css/**", "/api/auth/**").permitAll()
+                        // Додаємо сюди всі наші HTML сторінки, щоб браузер міг їх завантажити
+                        // А вже JS всередині них перевірить, чи ми залогінені
+                        .requestMatchers("/", "/index.html", "/dashboard.html", "/editor.html", "/admin.html",
+                                "/js/**", "/css/**", "/api/auth/**").permitAll()
+
                         .anyRequest().authenticated()
                 )
-                .httpBasic(withDefaults());
+                // ОСЬ ТУТ ЗМІНИ:
+                .httpBasic(basic -> basic
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            // Коли юзер не авторизований, ми просто повертаємо код 401.
+                            // Ми НЕ додаємо заголовок "WWW-Authenticate", тому вікно не вилізе.
+                            response.setStatus(401); // або просто 401
+                            response.getWriter().write("Unauthorized");
+                        })
+                );
 
         return http.build();
     }
